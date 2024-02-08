@@ -14,12 +14,12 @@ namespace ArkeneaProject.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll() //Getting all User data
         {
             var userDatas = await _fileServices.GetAllData();
             return View(userDatas);
         }
-        public IActionResult Download(int id)
+        public IActionResult Download(int id) //Downloading any record
         {
             var dataSet = _fileServices.GetAllData().Result;
             var data = dataSet.Where(x => x.Id == id).FirstOrDefault();
