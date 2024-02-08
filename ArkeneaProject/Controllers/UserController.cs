@@ -22,7 +22,7 @@ namespace ArkeneaProject.Controllers
         }
 
         [Authorize(Roles = "User")]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll()  //Getting all data for a User
         {
             var User = getUserEmail();
             if (User == null)
@@ -33,15 +33,13 @@ namespace ArkeneaProject.Controllers
             return View(userDatas);
         }
         [Authorize(Roles = "Admin,User")]
-        public IActionResult Upload()
+        public IActionResult Upload() //View for Upload data
         {
             return View();
         }
         [HttpPost]
-        public ActionResult Upload(UserData userData, IFormFile file)
+        public ActionResult Upload(UserData userData, IFormFile file) //Uploading a User data
         {
-            //UserData userData = JsonConvert.DeserializeObject<UserData>(data.User);
-            //if(data.file.Length > 0)
             if (file.Length > 0)
             {
                 using (var ms = new MemoryStream())
@@ -64,7 +62,7 @@ namespace ArkeneaProject.Controllers
             return RedirectToAction("index", "home");
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id) //View Page for Edit Record
         {
             if (id == null || _fileServices.GetAllUserData() == null)
             {
@@ -81,7 +79,7 @@ namespace ArkeneaProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, UserData userData, IFormFile file)
+        public async Task<IActionResult> Edit(int id, UserData userData, IFormFile file) //For Editing any record
         {
             if (id != userData.Id)
             {
@@ -103,10 +101,7 @@ namespace ArkeneaProject.Controllers
 
             return RedirectToAction("index", "home");
         }
-
-        //[HttpPost, ActionName("Delete")]
-        //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id) //For Deletion of Record
         {
             var User = getUserEmail();
             if(User == null)
@@ -123,7 +118,7 @@ namespace ArkeneaProject.Controllers
         }
 
         //[HttpPost]
-        public IActionResult Download(int id)
+        public IActionResult Download(int id) //For downloading the file
         {
             var response = new HttpResponseMessage();
             var User = getUserEmail();
@@ -136,33 +131,7 @@ namespace ArkeneaProject.Controllers
             return File(data.file, data.fileType, data.fileName);
             //return DownloadFile(data.file, data.fileName);
         }
-
-        public static HttpResponseMessage DownloadFile(byte[] byteArray, string fileName)
-        {
-            //var response = new HttpResponseMessage();
-
-
-            var response = new HttpResponseMessage();
-            string fileMediaType = "application/octet-stream";
-            response.Content = new ByteArrayContent(byteArray);
-            response.Content.Headers.ContentDisposition
-              = new ContentDispositionHeaderValue("attachment");
-            response.Content.Headers.ContentDisposition.FileName = fileName;
-            response.Content.Headers.ContentType
-               = new MediaTypeHeaderValue(fileMediaType);
-            response.Content.Headers.Add("Access-Control-Allow-Headers", "fileName");
-            response.Content.Headers.Add("fileName", fileName);
-
-            response.StatusCode = HttpStatusCode.OK;
-
-            response.Content.Headers.ContentLength = byteArray.Length;
-            return response;
-
-        }
-
-
-
-        public ApplicationUser getUserEmail()
+        public ApplicationUser getUserEmail() //Getting the User type: Admin or User
         {
             var userID = _userManager.GetUserId(HttpContext.User);
             if (userID == null)
